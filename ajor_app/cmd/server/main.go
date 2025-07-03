@@ -7,20 +7,15 @@ import (
 
 	"github.com/Gerard-007/ajor_app/internal/repository"
 	"github.com/Gerard-007/ajor_app/internal/routes"
+	"github.com/Gerard-007/ajor_app/internal/services"
 	"github.com/Gerard-007/ajor_app/pkg/jobs"
 	"github.com/Gerard-007/ajor_app/pkg/payment"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 	"github.com/robfig/cron/v3"
-	"github.com/Gerard-007/ajor_app/internal/services"
 )
 
 func main() {
-	if err := godotenv.Load(); err != nil {
-		log.Fatal("Error loading .env file")
-	}
-
 	db, err := repository.InitDatabase()
 	if err != nil {
 		log.Fatal(err)

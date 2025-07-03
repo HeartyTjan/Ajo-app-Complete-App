@@ -5,16 +5,11 @@ import (
 	"log"
 	"os"
 
-	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func InitDatabase() (*mongo.Database, error) {
-	if err := godotenv.Load(); err != nil {
-		log.Println("No .env file found, relying on system environment variables")
-	}
-
 	mongoURI := os.Getenv("MONGODB_URI")
 	if mongoURI == "" {
 		log.Fatal("MONGODB_URI not set in environment variables")
