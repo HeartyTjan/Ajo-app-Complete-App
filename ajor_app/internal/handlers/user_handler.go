@@ -10,6 +10,12 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/crypto/bcrypt"
 	"github.com/Gerard-007/ajor_app/internal/models"
+	"crypto/rand"
+	"encoding/hex"
+	"time"
+	"os"
+	"github.com/Gerard-007/ajor_app/pkg/utils"
+	"regexp"
 )
 
 func GetUserByIdHandler(db *mongo.Database) gin.HandlerFunc {
@@ -217,5 +223,85 @@ func ChangePasswordHandler(db *mongo.Database) gin.HandlerFunc {
 			return
 		}
 		c.JSON(http.StatusOK, gin.H{"message": "Password changed successfully"})
+	}
+}
+
+// ForgotPasswordHandler handles password reset requests
+func ForgotPasswordHandler(db *mongo.Database) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var req struct { Email string `json:"email"` }
+		if err := c.ShouldBindJSON(&req); err != nil || req.Email == "" {
+			c.JSON(400, gin.H{"error": "Invalid email"})
+			return
+		}
+		users := db.Collection("users")
+		var user models.User
+		err := users.FindOne(c, bson.M{"email": req.Email}).Decode(&user)
+		if err != nil {
+			// Always return success to prevent email enumeration
+			c.JSON(200, gin.H{"message": "If your email exists, a reset link has been sent."})
+			return
+		}
+		// Generate secure token
+		b := make([]byte, 32)
+		rand.Read(b)
+		token := hex.EncodeToString(b)
+		expiry := time.Now().Add(1 * time.Hour)
+		_, err = users.UpdateOne(c, bson.M{"_id": user.ID}, bson.M{"$set": bson.M{"reset_token": token, "reset_token_expiry": expiry}})
+		if err != nil {
+			c.JSON(500, gin.H{"error": "Failed to set reset token"})
+			return
+		}
+		resetURL := os.Getenv("APP_BASE_URL") + "/reset-password?token=" + token
+		subject := "Reset your AJOR App password"
+		body := "<p>Click the link below to reset your password:</p>" +
+			"<p><a href='" + resetURL + "'>Reset Password</a></p>"
+		err = utils.SendEmail(user.Email, subject, body)
+		if err != nil {
+			c.JSON(500, gin.H{"error": "Failed to send reset email"})
+			return
+		}
+		c.JSON(200, gin.H{"message": "If your email exists, a reset link has been sent."})
+	}
+}
+
+// ResetPasswordHandler handles password reset submissions
+func ResetPasswordHandler(db *mongo.Database) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var req struct {
+			Token string `json:"token"`
+			NewPassword string `json:"new_password"`
+		}
+		if err := c.ShouldBindJSON(&req); err != nil || req.Token == "" || req.NewPassword == "" {
+			c.JSON(400, gin.H{"error": "Invalid request"})
+			return
+		}
+		users := db.Collection("users")
+		var user models.User
+		err := users.FindOne(c, bson.M{"reset_token": req.Token}).Decode(&user)
+		if err != nil || user.ResetTokenExpiry.Before(time.Now()) {
+			c.JSON(400, gin.H{"error": "Invalid or expired token"})
+			return
+		}
+		// Password policy
+		if len(req.NewPassword) < 8 ||
+			!regexp.MustCompile(`[A-Z]`).MatchString(req.NewPassword) ||
+			!regexp.MustCompile(`[a-z]`).MatchString(req.NewPassword) ||
+			!regexp.MustCompile(`[0-9]`).MatchString(req.NewPassword) ||
+			!regexp.MustCompile("[!@#$%^&*()\\-_=+\\[\\]{}|;:',.<>?/\\`~\\\"]").MatchString(req.NewPassword) {
+			c.JSON(400, gin.H{"error": "Password must be at least 8 characters and include uppercase, lowercase, digit, and special character"})
+			return
+		}
+		hash, err := bcrypt.GenerateFromPassword([]byte(req.NewPassword), bcrypt.DefaultCost)
+		if err != nil {
+			c.JSON(500, gin.H{"error": "Failed to hash password"})
+			return
+		}
+		_, err = users.UpdateOne(c, bson.M{"_id": user.ID}, bson.M{"$set": bson.M{"password": string(hash), "reset_token": "", "reset_token_expiry": time.Time{}}})
+		if err != nil {
+			c.JSON(500, gin.H{"error": "Failed to update password"})
+			return
+		}
+		c.JSON(200, gin.H{"message": "Password reset successful. You can now log in."})
 	}
 }

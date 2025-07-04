@@ -7,7 +7,7 @@ export default function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
 
-  const handleReset = () => {
+  const handleReset = async () => {
     const isValidEmail = /\S+@\S+\.\S+/.test(email);
     if (!isValidEmail) {
       setError("Enter a valid email address");
@@ -15,17 +15,22 @@ export default function ForgotPassword() {
     }
 
     setError("");
-    // Send request to backend
-    alert("Reset link sent to " + email);
+    try {
+      const res = await fetch(`${API_BASE}/forgot-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      // Always show generic message for security
+      alert("If your email exists, a reset link has been sent.");
+    } catch (err) {
+      alert("Something went wrong. Please try again.");
+    }
   };
 
   return (
     <View style={styles.container}>
-      <Image
-        source={require("../../../assets/images/react-logo.png")}
-        style={styles.logo}
-      />
-
+      
       <Text style={styles.title}>Forgot Password?</Text>
       <Text style={styles.subtitle}>
         Enter the email linked to your account

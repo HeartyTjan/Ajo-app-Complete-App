@@ -69,4 +69,6 @@ func InitRoutes(router *gin.Engine, db *mongo.Database, pg payment.PaymentGatewa
 	}
 
 	router.GET("/verify-email", handlers.VerifyEmailHandler(db))
+	router.POST("/forgot-password", handlers.ForgotPasswordHandler(db))
+	router.POST("/reset-password", handlers.ResetPasswordHandler(db))
 }

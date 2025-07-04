@@ -1,5 +1,4 @@
 import { StyleSheet } from "react-native";
-import { COLORS } from "../../../constants/theme";
 
 export default StyleSheet.create({
   container: {
@@ -8,24 +7,12 @@ export default StyleSheet.create({
     backgroundColor: "#fff",
     justifyContent: "center",
   },
-  logo: {
-    width: 80,
-    height: 80,
-    alignSelf: "center",
-    marginBottom: 20,
-  },
   title: {
     fontSize: 22,
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 8,
-    color: COLORS.primary,
-  },
-  subtitle: {
-    fontSize: 14,
-    textAlign: "center",
-    marginBottom: 24,
-    color: "#555",
+    color: "#2e86de",
   },
   input: {
     borderColor: "#ccc",
@@ -39,9 +26,10 @@ export default StyleSheet.create({
     color: "red",
     fontSize: 12,
     marginBottom: 12,
+    textAlign: "center",
   },
   primaryButton: {
-    backgroundColor:  "#0f766e",
+    backgroundColor: "#2e86de",
     padding: 14,
     borderRadius: 8,
     alignItems: "center",
@@ -51,18 +39,4 @@ export default StyleSheet.create({
     color: "#fff",
     fontSize: 16,
   },
-  footer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginTop: 20,
-  },
-  footerText: {
-    fontSize: 14,
-    color: "#333",
-  },
-  footerLink: {
-    fontSize: 14,
-    color: COLORS.primary,
-    fontWeight: "600",
-  },
-});
+}); 
