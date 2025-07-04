@@ -9,9 +9,15 @@
       "distribution": "internal"
     },
     "preview": {
+      "env": {
+        "API_BASE": "https://ajo-app-22jy.onrender.com"
+      },
       "distribution": "internal"
     },
     "production": {
+      "env": {
+        "API_BASE": "https://ajo-app-22jy.onrender.com"
+      },
       "autoIncrement": true
     }
   },
