@@ -38,7 +38,31 @@ export const NotificationProvider = ({ children }: { children: React.ReactNode }
   useEffect(() => {
     fetchNotifications();
     const interval = setInterval(fetchNotifications, 10000);
-    return () => clearInterval(interval);
+
+    // WebSocket setup for real-time notifications
+    let ws: WebSocket | null = null;
+    const wsUrl = API_BASE.replace(/^http/, 'ws') + '/ws';
+    if (Platform.OS !== 'web') {
+      ws = new WebSocket(wsUrl);
+      ws.onopen = () => {
+        console.log('WebSocket connected');
+      };
+      ws.onmessage = (event) => {
+        console.log('WebSocket message:', event.data);
+        fetchNotifications();
+      };
+      ws.onerror = (error) => {
+        console.log('WebSocket error:', error.message);
+      };
+      ws.onclose = () => {
+        console.log('WebSocket closed');
+      };
+    }
+
+    return () => {
+      clearInterval(interval);
+      if (ws) ws.close();
+    };
   }, []);
 
   const safeNotifications = Array.isArray(notifications) ? notifications : [];

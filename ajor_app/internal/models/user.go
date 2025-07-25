@@ -18,6 +18,8 @@ type User struct {
 	VerificationToken string    `json:"verification_token" bson:"verification_token"`
 	CreatedAt time.Time          `json:"created_at" bson:"created_at"`
 	UpdatedAt time.Time          `json:"updated_at" bson:"updated_at"`
+	ResetToken string `json:"reset_token" bson:"reset_token"`
+	ResetTokenExpiry time.Time `json:"reset_token_expiry" bson:"reset_token_expiry"`
 }
 
 type UserResponse struct {

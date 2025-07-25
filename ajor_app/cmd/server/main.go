@@ -7,18 +7,19 @@ import (
 
 	"github.com/Gerard-007/ajor_app/internal/repository"
 	"github.com/Gerard-007/ajor_app/internal/routes"
+	"github.com/Gerard-007/ajor_app/internal/services"
 	"github.com/Gerard-007/ajor_app/pkg/jobs"
 	"github.com/Gerard-007/ajor_app/pkg/payment"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 	"github.com/robfig/cron/v3"
-	"github.com/Gerard-007/ajor_app/internal/services"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	// Load .env file
 	if err := godotenv.Load(); err != nil {
-		log.Fatal("Error loading .env file")
+		log.Println("Warning: .env file not found or could not be loaded")
 	}
 
 	db, err := repository.InitDatabase()
