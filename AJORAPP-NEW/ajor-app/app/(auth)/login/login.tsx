@@ -33,6 +33,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  console.log("API_BASE:", API_BASE);
 
   const handleLogin = async () => {
     const userInfo = { email, password };

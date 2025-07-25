@@ -7,6 +7,7 @@ import {
   ScrollView,
   Alert,
   Image,
+  Platform,
 } from "react-native";
 import { MaterialIcons, Entypo } from "@expo/vector-icons";
 import { saveToStorage, getFromStorage } from "../components/storage";
@@ -72,20 +73,31 @@ export default function UserProfile() {
   );
 
   const handleSignOut = () => {
-    Alert.alert("Log Out", "Are you sure you want to log out?", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Log Out",
-        style: "destructive",
-        onPress: async () => {
-          setLoading(true);
-          await saveToStorage("token", null);
-          await saveToStorage("user", null);
-          await saveToStorage("user_profile", null);
-          router.replace("/(auth)/login/login");
+    console.log("handleSignOut called");
+    if (Platform.OS === "web") {
+      if (window.confirm("Are you sure you want to log out?")) {
+        setLoading(true);
+        saveToStorage("token", null);
+        saveToStorage("user", null);
+        saveToStorage("user_profile", null);
+        router.replace("/(auth)/login/login");
+      }
+    } else {
+      Alert.alert("Log Out", "Are you sure you want to log out?", [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Log Out",
+          style: "destructive",
+          onPress: async () => {
+            setLoading(true);
+            await saveToStorage("token", null);
+            await saveToStorage("user", null);
+            await saveToStorage("user_profile", null);
+            router.replace("/(auth)/login/login");
+          },
         },
-      },
-    ]);
+      ]);
+    }
   };
 
   if (loading) {

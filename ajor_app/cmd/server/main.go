@@ -13,9 +13,15 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/robfig/cron/v3"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	// Load .env file
+	if err := godotenv.Load(); err != nil {
+		log.Println("Warning: .env file not found or could not be loaded")
+	}
+
 	db, err := repository.InitDatabase()
 	if err != nil {
 		log.Fatal(err)

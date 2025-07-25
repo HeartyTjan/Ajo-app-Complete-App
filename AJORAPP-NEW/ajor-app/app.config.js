@@ -1,3 +1,6 @@
+import 'dotenv/config';
+console.log("API_BASE from env:", process.env.API_BASE);
+
 export default ({ config }) => {
   return {
     ...config,
@@ -20,6 +23,10 @@ export default ({ config }) => {
         backgroundColor: "#ffffff",
       },
       edgeToEdgeEnabled: true,
+      permissions: ["INTERNET", "READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"], 
+    },
+    ios: {
+      bundleIdentifier: "com.ajor.ajorapp"
     },
     web: {
       bundler: "metro",
@@ -42,7 +49,7 @@ export default ({ config }) => {
       typedRoutes: true,
     },
     extra: {
-      API_BASE: process.env.API_BASE || "https://ajo-app-22jy.onrender.com",
+      API_BASE: process.env.API_BASE, //|| "https://ajo-app-22jy.onrender.com",
       router: {},
       eas: {
         projectId: "8dc7d274-e8d6-4c12-8689-8415dc9ab806",

@@ -19,8 +19,7 @@ import { getFromStorage } from "../components/storage";
 import styles from "../styles/groupDashboard";
 import Constants from 'expo-constants';
 
-export const API_BASE = Constants.expoConfig?.extra?.API_BASE || 'http://localhost:8080';
-
+export const API_BASE = Constants.expoConfig?.extra?.API_BASE 
 
 export default function AjoGroupDashboard() {
   const router = useRouter();
@@ -54,6 +53,13 @@ export default function AjoGroupDashboard() {
     setAjoGroup(parsedGroup);
   }, [parsedGroup]);
 
+  const handlePress = () => {
+    if (Platform.OS === 'web') {
+      alert("This feature is currently unavailable. Please check back later.");
+    } else {
+      Alert.alert("Feature Unavailable", "This feature is currently unavailable. Please check back later.");
+    }
+  };
   // Define fetchWallet as a local function so it can be called after contribution
   const fetchWallet = async () => {
     if (!ajoGroup?.id && !ajoGroup?._id) return;
@@ -141,10 +147,19 @@ export default function AjoGroupDashboard() {
   };
 
   const handleContribute = async () => {
-    if (!contributeAmount || isNaN(Number(contributeAmount)) || Number(contributeAmount) <= 0) {
-      Alert.alert("Invalid amount", "Please enter a valid amount");
-      return;
+    if (Platform.OS === 'web') {
+      console.log("contributeAmount", contributeAmount);
+      if (!contributeAmount || isNaN(Number(contributeAmount)) || Number(contributeAmount) <= 0) {
+        window.alert(`Contribution amount must be ${contributeAmount}`);
+        return;
+      }
+    } else {
+      if (!contributeAmount || isNaN(Number(contributeAmount)) || Number(contributeAmount) <= 0) {
+        Alert.alert("Invalid amount", `Contribution amount must be ${contributeAmount}`);
+        return;
+      }
     }
+    
     setContributing(true);
     try {
       const token = await getFromStorage("token");
@@ -287,7 +302,8 @@ export default function AjoGroupDashboard() {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.menuItem}
-          onPress={() => router.push({ pathname: '/ajo/recordPayment' })}
+          // onPress={() => router.push({ pathname: '/ajo/recordPayment' })}
+          onPress={handlePress}
         >
           <MaterialIcons name="payment" size={24} color="#0f766e" />
           <Text style={styles.menuText}>Record Payment</Text>
@@ -301,7 +317,8 @@ export default function AjoGroupDashboard() {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.menuItem}
-          onPress={() => router.push({ pathname: '/ajo/settings' })}
+          // onPress={() => router.push({ pathname: '/ajo/settings' })}
+          onPress={handlePress}
         >
           <Entypo name="cog" size={24} color="#0f766e" />
           <Text style={styles.menuText}>Group Settings</Text>

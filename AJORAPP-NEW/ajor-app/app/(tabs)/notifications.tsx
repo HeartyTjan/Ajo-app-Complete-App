@@ -283,18 +283,18 @@ const NotificationsScreen = () => {
     );
   }
 
-  if (!notifications.length) {
-    return (
-      <View style={styles.centered}>
-        <Ionicons name="notifications-off" size={48} color="#888" style={{ marginBottom: 12 }} />
-        <Text style={{ color: '#888', fontSize: 18, marginBottom: 8 }}>No notifications yet</Text>
-        <Text style={{ color: '#aaa', fontSize: 14 }}>You'll see important updates here.</Text>
-        {isDev && (
-          <Button title="Create Test Notification" onPress={createTestNotification} />
-        )}
-      </View>
-    );
-  }
+  // if (!notifications.length) {
+  //   return (
+  //     <View style={styles.centered}>
+  //       <Ionicons name="notifications-off" size={48} color="#888" style={{ marginBottom: 12 }} />
+  //       <Text style={{ color: '#888', fontSize: 18, marginBottom: 8 }}>No notifications yet</Text>
+  //       <Text style={{ color: '#aaa', fontSize: 14 }}>You'll see important updates here.</Text>
+  //       {isDev && (
+  //         <Button title="Create Test Notification" onPress={createTestNotification} />
+  //       )}
+  //     </View>a
+  //   );
+  // }
 
   return (
     <View style={{ flex: 1 }}>

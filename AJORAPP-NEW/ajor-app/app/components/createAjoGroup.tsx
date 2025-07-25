@@ -11,7 +11,7 @@ import axios from "axios";
 import styles from "../styles/createAjoGroup.styles";
 import { Stack, useRouter } from "expo-router";
 import { getFromStorage, saveToStorage } from "../components/storage";
-import RNPickerSelect from "react-native-picker-select";
+import { Picker } from '@react-native-picker/picker';
 import Constants from 'expo-constants';
 
 export const API_BASE = Constants.expoConfig?.extra?.API_BASE || 'http://localhost:8080';
@@ -81,7 +81,7 @@ export default function CreateAjoGroup() {
       });
 
       router.replace("/(tabs)/groups");
-    } catch (err) {
+    } catch (err: any) {
       console.error(err.response?.data || err.message);
       Alert.alert("Error", "Failed to create Ajo group");
     } finally {
@@ -129,37 +129,33 @@ export default function CreateAjoGroup() {
 
       <View style={styles.field}>
         <Text style={styles.label}>Cycle</Text>
-        <RNPickerSelect
+        <View style={styles.inputDropDown}>
+          <Picker
+            selectedValue={group.cycle}
           onValueChange={(value) => setGroup({ ...group, cycle: value })}
-          placeholder={{ label: "Select cycle", value: null }}
-          items={[
-            { label: "Weekly", value: "weekly" },
-            { label: "Monthly", value: "monthly" },
-            { label: "Daily", value: "daily" },
-          ]}
-          style={{
-            inputIOS: styles.inputDropDown,
-            inputAndroid: styles.inputDropDown,
-          }}
-          value={group.cycle}
-        />
+            prompt="Select cycle"
+          >
+            <Picker.Item label="Select cycle" value="" />
+            <Picker.Item label="Weekly" value="weekly" />
+            <Picker.Item label="Monthly" value="monthly" />
+            <Picker.Item label="Daily" value="daily" />
+          </Picker>
+        </View>
       </View>
 
       <View style={styles.field}>
         <Text style={styles.label}>Type</Text>
-        <RNPickerSelect
+        <View style={styles.inputDropDown}>
+          <Picker
+            selectedValue={group.type}
           onValueChange={(value) => setGroup({ ...group, type: value })}
-          placeholder={{ label: "Select type", value: null }}
-          items={[
-            { label: "Fixed", value: "daily_savings" },
-            { label: "Rotating", value: "group_contribution" },
-          ]}
-          style={{
-            inputIOS: styles.inputDropDown,
-            inputAndroid: styles.inputDropDown,
-          }}
-          value={group.type}
-        />
+            prompt="Select type"
+          >
+            <Picker.Item label="Select type" value="" />
+            <Picker.Item label="Fixed" value="daily_savings" />
+            <Picker.Item label="Rotating" value="group_contribution" />
+          </Picker>
+        </View>
       </View>
 
       <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>

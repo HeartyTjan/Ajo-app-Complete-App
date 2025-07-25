@@ -68,6 +68,9 @@ func InitRoutes(router *gin.Engine, db *mongo.Database, pg payment.PaymentGatewa
 		authenticated.POST("/webhook/flutterwave", handlers.FlutterwaveWebhookHandler(db, pg))
 	}
 
+	router.GET("/ws", func(c *gin.Context) {
+		handlers.HandleWebSocket(c.Writer, c.Request)
+	})
 	router.GET("/verify-email", handlers.VerifyEmailHandler(db))
 	router.POST("/forgot-password", handlers.ForgotPasswordHandler(db))
 	router.POST("/reset-password", handlers.ResetPasswordHandler(db))
